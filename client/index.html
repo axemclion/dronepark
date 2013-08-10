@@ -7,6 +7,9 @@
 		<style>
 			body {
 				text-align: center;
+				height: 100%;
+				padding: 0;
+				margin: 0;
 			}
 
 			.icons {
@@ -16,25 +19,47 @@
 				text-decoration: none
 			}
 
+			.frame {
+				border: 1px SOLID BLUE;
+				padding: 10px;
+				border-radius: 10px;
+			}
+
 		</style>
 	</head>
 	<body>
-		<div class = "container">
+		<div>
 			<div class = "start">
 				<img src = "img/start.png" class = "icons"/>
 				<p>
 					Click on the icon to launch the drone
 				</p>
 			</div>
-			<div class = "stop hide">
-				<img src = "img/stop.png" class = "icons">
-				<p>
-					If you have already found parking, click stop
-				</p>
+			<div class = "status hide">
+				<div style = "z-index:100; position: absolute; bottom: 10%; width: 100%">
+					<button id = "recallDrone" class = "btn btn-lg btn-warning">
+						Recall Drone
+					</button>
+					<div class = "hide alert" id = "recalling">
+						Drone returning ... 
+					</div>
+				</div>
+				<div style = "z-index:100; position: absolute; top: 5%; width: 100%">
+					<div class = "alert alert-info parking-searching">
+						Searching for parking ... 
+					</div>
+					<div class = "alert alert-success parking-found hide">
+						Parking spot found
+					</div> 
+				</div>
+				<div id = "maps" style = "width: 100%;height: 100%; top: 0; opacity: 0.8; position: absolute;">
+				</div>
 			</div>
 		</div>
 		<script type="text/javascript" src = "lib/jquery.min.js"></script>
 		<script type="text/javascript" src = "lib/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRLSEdGHVKqZNH4g3fnaSkJ87j6nyChRs&sensor=false&libraries=drawing">
+    </script>
 		<script type="text/javascript" src = "app.js"></script>
 	</body>
 </html>
