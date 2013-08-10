@@ -24,6 +24,6 @@ app.listen(port, function() {
 
 function respond(req, res){
 	return function(data){
-		res.send([req.param.callback, "(", JSON.stringify(data), ");"]);
+		res.send([req.query.callback, "(", JSON.stringify(data), ");"].join(''));
 	}
 }
