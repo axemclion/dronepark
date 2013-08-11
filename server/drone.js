@@ -2,6 +2,7 @@ var drone = require('ar-drone');
 var fs = require('fs');
 var client  = drone.createClient();
 var imageProcessor = require("./imageprocess.js");
+var flying = false;
 
 function streamImages() {
 	client.getPngStream().on("data", function(data) {
@@ -101,6 +102,7 @@ exports.init = function() {
 
 exports.start = function(cb){
 	console.log("Attempting takeoff");
+	flying = true;
 	client.takeoff(function() {
 		liftDirection = 2;
 		console.log("Takeoff successful");
@@ -171,6 +173,7 @@ exports.switchCamera = function(cb) {
 }
 
 exports.stop = function(cb){
+	flying = false;
 	liftDirection = 0;
 	client.land(function() {
 		console.log("Drone landed");
@@ -179,5 +182,6 @@ exports.stop = function(cb){
 }
 
 exports.status = function(cb){
+	droneStateInfo['status'] = flying ? 'flying' : 'complete';
 	cb(droneStateInfo);
 }
