@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css"/>
+		<style>
+			html, div{
+				background: #EEE;
+			}
+		</style>
+	</head>
+	<body style = "height: 100%">
+		<span id="myContainer"></span>
+		<script type="text/javascript" src = "lib/jquery.min.js"></script>
+		<script src="https://www.paypalobjects.com/js/external/api.js"></script>
+		<div class = "container">
+			<div style = "text-align:center; height: 100%; padding: 20% 0; margin: 0">
+				<h1>
+					Parking Drone
+				</h1>
+				<p>Why drive around to find parking when you can fly</p>
+				<br/>
+				<img style = "" id = "login" src = "https://www.paypalobjects.com/webstatic/en_US/developer/docs/lipp/loginwithpaypalbutton.png">
+			</div>
+		</div>
+		<script type="text/javascript">
+			$("#login").click(function(){
+				var url = "https://www.paypal.com/webapps/auth/protocol/openidconnect/v1/authorize?";
+				var params = {
+					client_id : "AdFXGxAloP5gyrUvG_2zDXpYc4p97Xgz2iCGMznJ2qoB1yxcKQvQjFpq0JYL",
+					redirect_uri : "http://" + document.location.host,
+					nonce : Math.random(),
+					response_type: "code",
+					scope: "profile email address"
+				}
+				document.location.href = url + $.param(params);
+			});
+		</script>
+	</body>
+</html>
