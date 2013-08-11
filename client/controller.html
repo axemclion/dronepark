@@ -3,6 +3,7 @@
 	<body>
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRLSEdGHVKqZNH4g3fnaSkJ87j6nyChRs&sensor=false&libraries=drawing">
     </script>
+    	<h1 id = "key"></h1>
 		<script type="text/javascript" src = "lib/jquery.min.js"></script>
 		<script type="text/javascript" src = "app.js"></script>
 		<script type="text/javascript">
@@ -11,12 +12,13 @@
 					'65' : 'l',
 					'68' : 'r',
 					'87' : 'f',
-					'83' : 'b'
+					'83' : 'b',
 				};
 				if (e.keyCode in keycodes){
 					$.get(server + 'go?d='+ keycodes[e.keyCode]+ '&callback=?', function(data) {
 						console.log(data);
 					});
+					$('#key').html( keycodes[e.keyCode]);
 				}
 			});
 		</script>
