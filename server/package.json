@@ -22,6 +22,7 @@
   "dependencies": {
     "express": "~3.3.4",
     "node-ar-drone": "git+https://github.com/felixge/node-ar-drone#master",
-    "opencv": "~0.3.1"
+    "opencv": "~0.3.1",
+    "request": "~2.26.0"
   }
 }

@@ -13,8 +13,8 @@
 			}
 
 			.icons {
-				margin: 10% 5%;
-				width: 60%;
+				margin: 5% 5% 1% 5%;
+				width: 30%;
 				border: none;
 				text-decoration: none
 			}
@@ -29,11 +29,16 @@
 	</head>
 	<body>
 		<div>
-			<div class = "start">
+			<div class = "start" style = "height: 100%; background-color: #eee">
+				<div style = "padding: 2%">
+					<h1>Parking Drone</h1>
+				</div>
+				<p class = "">Why drive around to find parking when you can fly</p>
 				<img src = "img/start.png" class = "icons"/>
 				<p>
 					Click on the icon to launch the drone
 				</p>
+				<img style = "margin: 10%" id = "login" src = "https://www.paypalobjects.com/webstatic/en_US/developer/docs/lipp/loginwithpaypalbutton.png">
 			</div>
 			<div class = "status hide">
 				<div style = "z-index:100; position: absolute; bottom: 10%; width: 100%">
@@ -74,7 +79,7 @@
 					  </div>
 					</div>
 				</div>
-				<div id = "maps" style = "width: 100%;height: 100%; top: 0; opacity: 0.8; position: absolute;">
+				<div id = "maps" style = "width: 100%;height: 100%; top: 0; opacity: 0.8; position: absolute; background-image: url('img/staticmap.png'); background-position: center; background-repeat: no-repeat;">
 				</div>
 			</div>
 		</div>
