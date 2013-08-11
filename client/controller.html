@@ -3,10 +3,10 @@
 	<body>
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRLSEdGHVKqZNH4g3fnaSkJ87j6nyChRs&sensor=false&libraries=drawing">
     </script>
-    	<img id = "res" src = "http://localhost:32123/"/>
+    	<img id = "res"/>
 		<script type="text/javascript">
 			window.setInterval(function(){
-				document.getElementById("res").src = server + "/image" + Math.random();
+				document.getElementById("res").src = server + "image?" + Math.random();
 			},100);
 		</script>
     	<button id = "takeOff">Takeoff</button>
@@ -24,8 +24,8 @@
 				'68' : 'r',
 				'87' : 'f',
 				'83' : 'b',
-				'88' : 's'
-				'113' : 'rl'
+				'88' : 's',
+				'113' : 'rl',
 				'101' : 'rr'
 			};
 			var keysDown = {
@@ -33,8 +33,8 @@
 				'68' : false,
 				'87' : false,
 				'83' : false,
-				'88' : false
-				'113' : false
+				'88' : false,
+				'113' : false,
 				'101' : false
 			};
 
