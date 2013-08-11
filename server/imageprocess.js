@@ -20,9 +20,14 @@ exports.detect = function(data) {
 
 		contours = im.findContours();
 		lastContoursSize = contours.size();
-//		console.log(contours.size());
+		console.log(contours.size());
 
 		im.drawAllContours(contours, WHITE);
+
+		/*var lines = im.houghLinesP();
+		for (line in lines) {
+			im.line([line[0], line[1]], [line[2], line[3]], GREEN);
+		}*/
 
 		exports.result = im.toBuffer();
 	})

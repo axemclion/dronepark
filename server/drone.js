@@ -23,8 +23,29 @@ exports.getImage = function() {
 var targetHeight = 1.0;
 var liftSpeed = 0.5;
 var liftDirection = 0; // 0 -> do nothing, 1 -> down, 2 -> neutral, 3 -> up
+var droneStateInfo = {
+	battery : 0,
+	//rotation : 0,
+	frontBackDegrees : 0,
+	leftRightDegrees : 0,
+	clockwiseDegrees : 0,
+	altitude : 0,
+	velocity : { x : 0, y : 0, z : 0 },
+	status : 'incomplete', // 'complete' when parking is found
+	destination : { latitude : 0, longitude: 0 }
+};
 function setHover() {
 	client.on('navdata', function(navData) {
+		if (navData.hasOwnProperty("demo")) {
+			droneStateInfo.battery = navData.demo.batteryPercentage;
+			//droneStateInfo.rotation = navData.rotation;
+			droneStateInfo.frontBackDegrees = navData.demo.frontBackDegrees;
+			droneStateInfo.leftRightDegrees = navData.demo.leftRigthDegrees;
+			droneStateInfo.clockwiseDegrees = navData.demo.clockwiseDegrees;
+			droneStateInfo.altitude = navData.demo.altitudeMeters;
+			droneStateInfo.velocity = navData.demo.velocity;
+		}
+
 		if (liftDirection == 0) return;
 
 		if (navData.hasOwnProperty("demo")) {
@@ -52,15 +73,19 @@ function setHover() {
 	});
 }
 
-var normalHeight = 1.0;
-var objectDetectedHeight = 0.3;
+var normalHeight = 1.5;
+var objectDetectedHeight = 0.2;
 function setObjectDetection(targetSize) {
 	client.config("video:video_channel", 3);
 	setInterval(function() {
-			if (imageProcessor.contoursSize() >= 15) {
+			if (imageProcessor.contoursSize() >= 25) {
 				targetHeight = objectDetectedHeight;
+				droneStateInfo.status = 'complete';
+				drone.StateInfo.destination.latitude = -122.3312776;
+				drone.StateInfo.destination.longitude = 47.6005914;
 			} else {
 				targetHeight = normalHeight;
+				droneStateInfo.status = 'incomplete';
 			}
 		},
 		100
@@ -153,14 +178,6 @@ exports.stop = function(cb){
 	cb({});
 }
 
-var count = 0;
 exports.status = function(cb){
-	console.log(count);
-	count++;
-	if (count > 10){
-		cb({status: 'complete'});
-		count = 0;
-	} else {
-		cb({status: 'searching', count: count});
-	}
+	cb(droneStateInfo);
 }
