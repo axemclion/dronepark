@@ -4,6 +4,8 @@
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRLSEdGHVKqZNH4g3fnaSkJ87j6nyChRs&sensor=false&libraries=drawing">
     </script>
     	<h1 id = "key"></h1>
+    	<button id = "start">Start</button>
+    	<button id = "stop">Stop</button>
 		<script type="text/javascript" src = "lib/jquery.min.js"></script>
 		<script type="text/javascript" src = "app.js"></script>
 		<script type="text/javascript">
@@ -21,6 +23,16 @@
 					$('#key').html( keycodes[e.keyCode]);
 				}
 			});
+
+			$('#start').click(function(){
+				$.get(server+"start");
+			});
+
+
+			$('#stop').click(function(){
+				$.get(server+"stop");
+			})
+
 		</script>
 	</body>
 </html>
