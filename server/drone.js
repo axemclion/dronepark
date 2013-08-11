@@ -21,7 +21,9 @@ exports.getImage = function() {
  return imageProcessor.result;
 }
 
-var targetHeight = 1.0;
+var normalHeight = 1.25;
+var objectDetectedHeight = 0.2;
+var targetHeight = normalHeight;
 var liftSpeed = 0.5;
 var liftDirection = 0; // 0 -> do nothing, 1 -> down, 2 -> neutral, 3 -> up
 function setHover() {
@@ -53,8 +55,6 @@ function setHover() {
 	});
 }
 
-var normalHeight = 1.5;
-var objectDetectedHeight = 0.2;
 function setObjectDetection(targetSize) {
 	setInterval(function() {
 			if (imageProcessor.contoursSize() >= 25) {
@@ -65,6 +65,12 @@ function setObjectDetection(targetSize) {
 		},
 		100
 		);
+}
+
+exports.beginCircle = function(cb) {
+	client.front(0.05);
+	client.counterClockwise(0.4);
+	cb({});
 }
 
 exports.init = function() {
@@ -103,13 +109,13 @@ exports.followpath = function(cb) {
 					setTimeout(function() {
 							client.stop();
 						},
-					 	1500
+					 	500
 						);
 				},
 				2000
 				);
 		},
-		1500
+		500
 		);
 	cb({});
 }
@@ -163,7 +169,7 @@ exports.stop = function(cb){
 }
 
 exports.status = function(cb){
-	var droneStateInfo = [];
+	var droneStateInfo = {};
 	droneStateInfo['status'] = flying ? 'flying' : 'complete';
 	cb(droneStateInfo);
 }
