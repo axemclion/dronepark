@@ -32,6 +32,7 @@
 					response_type: "code",
 					scope: "profile email address"
 				}
+				alert(url + $.param(params));
 				document.location.href = url + $.param(params);
 			});
 		</script>
