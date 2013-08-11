@@ -1,0 +1,7 @@
+[
+	{
+		"name" : "Sample Parking Garage",
+		"costPerHour" : "$10.00",
+		"merchantId" : "testmerchant"
+	}
+]
