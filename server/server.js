@@ -9,6 +9,10 @@ app.get("/server/start", function(req, res) {
 	drone.start(respond(req, res));
 });
 
+app.get("/server/calibrate", function(req, res) {
+	drone.followpath(respond(req, res));
+});
+
 app.get("/server/followpath", function(req, res) {
 	drone.followpath(respond(req, res));
 });

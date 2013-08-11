@@ -20,35 +20,57 @@ exports.getImage = function() {
  return imageProcessor.result;
 }
 
-var liftSpeed = 0.4;
+var targetHeight = 1.0;
+var liftSpeed = 0.5;
 var liftDirection = 0; // 0 -> do nothing, 1 -> down, 2 -> neutral, 3 -> up
-function setHover(targetHeight) {
+function setHover() {
 	client.on('navdata', function(navData) {
 		if (liftDirection == 0) return;
 
 		if (navData.hasOwnProperty("demo")) {
 			var offset = targetHeight - navData.demo.altitudeMeters;
-			if (0.2 < offset && liftDirection != 3) {
-				console.log("Lifting");
-				liftDirection = 3;
-				client.up(liftSpeed);
-			} else if (offset < -0.2 && liftDirection != 1) {
-				console.log("Dropping");
-				liftDirection = 1;
-				client.down(liftSpeed);
-			} else if (liftDirection != 2) {
-				console.log("Hovering");
-				liftDirection = 2;
-				client.stop();
+			if (0.2 < offset) {
+				if (liftDirection != 3) {
+					console.log("Lifting");
+					liftDirection = 3;
+					client.up(liftSpeed);
+				}
+			} else if (offset < -0.2) {
+				if (liftDirection != 1) {
+					console.log("Dropping");
+					liftDirection = 1;
+					client.down(liftSpeed);
+				}
+			} else {
+				if (liftDirection != 2) {
+					console.log("Hovering");
+					liftDirection = 2;
+					client.stop();
+				}
 			}
 		}
 	});
 }
 
-exports.init = function() {
-	//setHover(0.5);
+var normalHeight = 1.0;
+var objectDetectedHeight = 0.3;
+function setObjectDetection(targetSize) {
 	client.config("video:video_channel", 3);
+	setInterval(function() {
+			if (imageProcessor.contoursSize() >= 15) {
+				targetHeight = objectDetectedHeight;
+			} else {
+				targetHeight = normalHeight;
+			}
+		},
+		100
+		);
+}
+
+exports.init = function() {
+	setHover();
 	streamImages();
+	setObjectDetection();
 	console.log("Drone initialized");
 }
 
@@ -58,39 +80,40 @@ exports.start = function(cb){
 		liftDirection = 2;
 		console.log("Takeoff successful");
 	});
+	cb({});
 }
 
+exports.calibrate = function(cb) {
+	console.log("Calibrating");
+	client.calibrate(0);
+	cb({});
+}
+
+var pathSpeed = 0.1;
 exports.followpath = function(cb) {
-	console.log("F");
-	client.forward(0.2);
-	setInterval(function() {
-			console.log("S")
+	client.front(pathSpeed);
+	setTimeout(function() {
 			client.stop();
-			console.log("R");
 			client.counterClockwise(0.4);
-			setInterval(function() {
-					console.log("S")
+			setTimeout(function() {
 					client.stop();
-					console.log("F")
-					client.forward(0.2);
-					setInterval(function() {
-							console.log("S")
+					client.front(pathSpeed);
+					setTimeout(function() {
 							client.stop();
 						},
-					 	1000
+					 	1500
 						);
 				},
 				2000
 				);
 		},
-		1000
+		1500
 		);
+	cb({});
 }
 
-var manualRotationalSpeed = 0.05;
+var manualRotationalSpeed = 0.4;
 var manualDirectionalSpeed = 0.2;
-var manualTimeApplicable = 500;
-var executingManual = false;
 exports.go = function(direction, cb) {
 	switch (direction) {
 		case "l":
@@ -112,12 +135,14 @@ exports.go = function(direction, cb) {
 			console.log("Unrecognized movement: " + direction);
 			break;
 	}
+	cb({});
 }
 
 var vidChannel = 0;
 exports.switchCamera = function(cb) {
 	vidChannel = (vidChannel == 0 ? 3 : 0);
 	client.config("video:video_channel", vidChannel);
+	cb({});
 }
 
 exports.stop = function(cb){
@@ -125,6 +150,7 @@ exports.stop = function(cb){
 	client.land(function() {
 		console.log("Drone landed");
 	});
+	cb({});
 }
 
 var count = 0;

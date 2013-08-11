@@ -1,5 +1,10 @@
 var cv = require('opencv');
 
+var lastContoursSize = 0;
+exports.contoursSize = function() {
+	return lastContoursSize;
+}
+
 exports.detect = function(data) {
 	var lowThresh = 0;
 	var highThresh = 100;
@@ -14,6 +19,7 @@ exports.detect = function(data) {
 		im.dilate(nIters);
 
 		contours = im.findContours();
+		lastContoursSize = contours.size();
 //		console.log(contours.size());
 
 		im.drawAllContours(contours, WHITE);

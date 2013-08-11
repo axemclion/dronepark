@@ -3,21 +3,33 @@
 	<body>
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRLSEdGHVKqZNH4g3fnaSkJ87j6nyChRs&sensor=false&libraries=drawing">
     </script>
+    	<button id = "takeOff">Takeoff</button>
+    	<button id = "calibrate">Calibrate</button>
+    	<button id = "followPath">Follow Path</button>
+			<button id = "land">Land</button>
+			<br />
     	<h1 id = "key"></h1>
-    	<button id = "start">Start</button>
-    	<button id = "followpath">Follow Path</button>
-    	<button id = "stop">Stop</button>
 		<script type="text/javascript" src = "lib/jquery.min.js"></script>
 		<script type="text/javascript" src = "app.js"></script>
 		<script type="text/javascript">
+			var keycodes = {
+				'65' : 'l',
+				'68' : 'r',
+				'87' : 'f',
+				'83' : 'b',
+				'88' : 's'
+			};
+			var keysDown = {
+				'65' : false,
+				'68' : false,
+				'87' : false,
+				'83' : false,
+				'88' : false
+			};
+
 			$(document).on('keydown', function(e){
-				var keycodes = {
-					'65' : 'l',
-					'68' : 'r',
-					'87' : 'f',
-					'83' : 'b',
-				};
-				if (e.keyCode in keycodes){
+				if (e.keyCode in keycodes && !keysDown[e.keyCode]){
+					keysDown[e.keyCode] = true;
 					$.getJSON(server + 'go?d='+ keycodes[e.keyCode]+ '&callback=?', function(data) {
 						console.log(data);
 					});
@@ -25,12 +37,28 @@
 				}
 			});
 
-			$('#start').click(function(){
-				$.getJSON(server+"start?callback=?");
+			$(document).on('keyup', function(e){
+				keysDown[e.keyCode] = false;
+				$.getJSON(server + 'go?d=s&callback=?', function(data) {
+					console.log(data);
+				});
+				$('#key').html('');
 			});
 
 
-			$('#stop').click(function(){
+			$('#takeOff').click(function(){
+				$.getJSON(server+"start?callback=?");
+			});
+
+			$('#calibrate').click(function(){
+				$.getJSON(server+"calibrate?callback=?");
+			});
+
+			$('#followPath').click(function(){
+				$.getJSON(server+"followpath?callback=?");
+			});
+
+			$('#land').click(function(){
 				$.getJSON(server+"stop?callback=?");
 			})
 
