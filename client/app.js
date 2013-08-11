@@ -1,6 +1,6 @@
 var handle, latlong;
 var server = 'http://172.16.2.221:32123/server/';
-var server = 'http://172.16.1.131:32123/server/';
+//var server = 'http://172.16.1.131:32123/server/';
 
 navigator.geolocation.watchPosition(geo_success, geo_error, {
 	enableHighAccuracy: true,
