@@ -1,5 +1,6 @@
 var handle, latlong;
 var server = 'http://172.16.2.221:32123/server/';
+var server = 'http://172.16.1.131:32123/server/';
 
 navigator.geolocation.watchPosition(geo_success, geo_error, {
 	enableHighAccuracy: true,
@@ -14,6 +15,12 @@ var map, destination;
 if (document.location.search) {
 	$("#login").hide();
 }
+
+$('.parking-searching').click(function(){
+	$.getJSON(server + 'stop?callback=?', function(data) {
+		window.clearInterval(handle);
+	});
+});
 
 $("#login").click(function() {
 	var url = "https://www.paypal.com/webapps/auth/protocol/openidconnect/v1/authorize?";
@@ -35,6 +42,7 @@ $('.start').click(function() {
 		handle = window.setInterval(function() {
 			$.getJSON(server + 'status?callback=?&time=', function(data) {
 				console.log(data);
+				$.getJSON(server + 'sms?callback=?');
 				if (data && data.status && data.status === 'complete') {
 					$('#reached').removeClass('hide');
 					window.clearInterval(handle);
