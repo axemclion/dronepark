@@ -9,16 +9,20 @@ app.get("/server/start", function(req, res) {
 	drone.start(respond(req, res));
 });
 
+app.get("/server/followpath", function(req, res) {
+	drone.followpath(respond(req, res));
+});
+
+app.get("/server/go", function(req, res) {
+	drone.go(req.query.d, respond(req, res));
+});
+
 app.get("/server/stop", function(req, res) {
 	drone.stop(respond(req, res));
 });
 
 app.get("/server/status", function(req, res) {
 	drone.status(respond(req, res));
-});
-
-app.get("/server/go", function(req, res) {
-	drone.go(req.query.d, respond(req, res));
 });
 
 var port = process.env.PORT || 32123;

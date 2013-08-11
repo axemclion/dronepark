@@ -5,6 +5,7 @@
     </script>
     	<h1 id = "key"></h1>
     	<button id = "start">Start</button>
+    	<button id = "followpath">Follow Path</button>
     	<button id = "stop">Stop</button>
 		<script type="text/javascript" src = "lib/jquery.min.js"></script>
 		<script type="text/javascript" src = "app.js"></script>
@@ -17,7 +18,7 @@
 					'83' : 'b',
 				};
 				if (e.keyCode in keycodes){
-					$.get(server + 'go?d='+ keycodes[e.keyCode]+ '&callback=?', function(data) {
+					$.getJSON(server + 'go?d='+ keycodes[e.keyCode]+ '&callback=?', function(data) {
 						console.log(data);
 					});
 					$('#key').html( keycodes[e.keyCode]);
@@ -25,12 +26,12 @@
 			});
 
 			$('#start').click(function(){
-				$.get(server+"start");
+				$.getJSON(server+"start?callback=?");
 			});
 
 
 			$('#stop').click(function(){
-				$.get(server+"stop");
+				$.getJSON(server+"stop?callback=?");
 			})
 
 		</script>

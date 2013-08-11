@@ -14,102 +14,119 @@ function streamImages() {
 	});
 }
 
-var droneStopped = true;
 var liftSpeed = 0.4;
-var liftStopped = true;
+var liftDirection = 0; // 0 -> do nothing, 1 -> down, 2 -> neutral, 3 -> up
 function setHover(targetHeight) {
 	client.on('navdata', function(navData) {
-		if (!droneStopped) {
+		if (liftDirection == 0) return;
+
+		if (navData.hasOwnProperty("demo")) {
 			var offset = targetHeight - navData.demo.altitudeMeters;
-			var absOffset = offset < 0 ? offset * -1 : offset;
-			console.log("Offset: " + offset + ", " + navData.demo.altitudeMeters);
-			if (absOffset > 0.2) {
-				liftStopped = false;
-				if (offset > 0) {
-					client.up(liftSpeed);
-					console.log("Lifting");
-				} else {
-					client.down(liftSpeed);
-					console.log("Dropping");
-				}
-			} else if (!liftStopped) {
-				liftStopped = true;
+			if (0.2 < offset && liftDirection != 3) {
+				liftDirection = 3;
+				client.up(liftSpeed);
+			} else if (offset < -0.2 && liftDirection != 1) {
+				liftDirection = 1;
+				client.down(liftSpeed);
+			} else if (liftDirection != 2) {
+				liftDirection = 2;
 				client.stop();
-				console.log("Hovering");
 			}
 		}
 	});
 }
 
 exports.init = function() {
-	setHover(2.0);
+	setHover(1.5);
 	console.log("Drone initialized");
 }
 
 exports.start = function(cb){
-	droneStopped = false;
 	console.log("Attempting takeoff");
 	client.takeoff(function() {
+		liftDirection = 2;
 		console.log("Takeoff successful");
-		client.back(0.02);
-		cb({});
 	});
 }
 
-var manualRotationalSpeed = 0.1;
-var manualDirectionalSpeed = 0.1;
-var manualTimeApplicable = 2000;
+exports.followpath = function(cb) {
+	client.forward(0.1);
+	setInterval(function() {
+			client.stop();
+			client.counterClockwise(0.4);
+			setInterval(function() {
+					client.stop();
+					client.forward(0.1);
+					setInterval(function() {
+							client.stop();
+						},
+					 	2000
+						);
+				},
+				2000
+				);
+		},
+		2000
+		);
+}
+
+var manualRotationalSpeed = 0.05;
+var manualDirectionalSpeed = 0.2;
+var manualTimeApplicable = 500;
+var executingManual = false;
 exports.go = function(direction, cb) {
+	if (executingManual) {
+		return;
+	}
+
+	executingManual = true;
 	switch (direction) {
 		case "l":
 			client.counterClockwise(manualRotationalSpeed);
 			setInterval(
-				function() { client.clockwise(manualRotationalSpeed); },
+				function() { client.stop(); executingManual = false; }, //client.clockwise(manualRotationalSpeed); },
 				manualTimeApplicable
 				);
 			break;
 		case "r":
 			client.clockwise(manualRotationalSpeed);
 			setInterval(
-				function() { client.counterClockwise(manualRotationalSpeed); },
+				function() { client.stop(); executingManual = false; }, //client.counterClockwise(manualRotationalSpeed); },
 				manualTimeApplicable
 				);
 			break;
 		case "f":
 			client.front(manualDirectionalSpeed);
 			setInterval(
-				function() { client.back(manualDirectionalSpeed); },
+				function() { client.stop(); executingManual = false; }, //back(manualDirectionalSpeed); },
 				manualTimeApplicable
 				);
 			break;
 		case "b":
 			client.back(manualDirectionalSpeed);
 			setInterval(
-				function() { client.front(manualDirectionalSpeed); },
+				function() { client.stop(); executingManual = false; }, //front(manualDirectionalSpeed); },
 				manualTimeApplicable
 				);
 			break;
 		default:
 			console.log("Unrecognized movement: " + direction);
+			executingManual = false;
 			break;
 	}
 }
 
 var vidChannel = 0;
-exports.switchCamera = function() {
+exports.switchCamera = function(cb) {
 	vidChannel = (vidChannel == 0 ? 3 : 0);
 	client.config("video:video_channel", vidChannel);
-	cb({});
 }
 
 exports.stop = function(cb){
-	droneStopped = true;
-	console.log("Drone returning");
-	// Return to origin
+	liftDirection = 0;
 	client.land(function() {
 		console.log("Drone landed");
 	});
-	cb({});
 }
 
 var count = 0;
