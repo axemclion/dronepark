@@ -14,7 +14,7 @@ exports.detect = function(data) {
 		im.dilate(nIters);
 
 		contours = im.findContours();
-		console.log(contours.size());
+//		console.log(contours.size());
 
 		im.drawAllContours(contours, WHITE);
 

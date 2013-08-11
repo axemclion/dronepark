@@ -21,6 +21,11 @@ app.get("/server/stop", function(req, res) {
 	drone.stop(respond(req, res));
 });
 
+app.get("/server/image", function(req, res) {
+	res.contentType("image/png");
+	res.send(drone.getImage());
+});
+
 app.get("/server/status", function(req, res) {
 	drone.status(respond(req, res));
 });

@@ -1,17 +1,23 @@
 var drone = require('ar-drone');
 var fs = require('fs');
 var client  = drone.createClient();
+var imageProcessor = require("./imageprocess.js");
 
 function streamImages() {
 	client.getPngStream().on("data", function(data) {
-		fs.writeFile("snapshot.png", data, function(err) {
+		imageProcessor.detect(data);
+		/*fs.writeFile("snapshot.png", data, function(err) {
 			if (err) {
 				console.log(err);
 			} else {
 				console.log("Snapshot saved");
 			}
-		});
+		});*/
 	});
+}
+
+exports.getImage = function() {
+ return imageProcessor.result;
 }
 
 var liftSpeed = 0.4;
@@ -23,12 +29,15 @@ function setHover(targetHeight) {
 		if (navData.hasOwnProperty("demo")) {
 			var offset = targetHeight - navData.demo.altitudeMeters;
 			if (0.2 < offset && liftDirection != 3) {
+				console.log("Lifting");
 				liftDirection = 3;
 				client.up(liftSpeed);
 			} else if (offset < -0.2 && liftDirection != 1) {
+				console.log("Dropping");
 				liftDirection = 1;
 				client.down(liftSpeed);
 			} else if (liftDirection != 2) {
+				console.log("Hovering");
 				liftDirection = 2;
 				client.stop();
 			}
@@ -37,7 +46,9 @@ function setHover(targetHeight) {
 }
 
 exports.init = function() {
-	setHover(1.5);
+	//setHover(0.5);
+	client.config("video:video_channel", 3);
+	streamImages();
 	console.log("Drone initialized");
 }
 
@@ -50,23 +61,29 @@ exports.start = function(cb){
 }
 
 exports.followpath = function(cb) {
-	client.forward(0.1);
+	console.log("F");
+	client.forward(0.2);
 	setInterval(function() {
+			console.log("S")
 			client.stop();
+			console.log("R");
 			client.counterClockwise(0.4);
 			setInterval(function() {
+					console.log("S")
 					client.stop();
-					client.forward(0.1);
+					console.log("F")
+					client.forward(0.2);
 					setInterval(function() {
+							console.log("S")
 							client.stop();
 						},
-					 	2000
+					 	1000
 						);
 				},
 				2000
 				);
 		},
-		2000
+		1000
 		);
 }
 
@@ -75,43 +92,24 @@ var manualDirectionalSpeed = 0.2;
 var manualTimeApplicable = 500;
 var executingManual = false;
 exports.go = function(direction, cb) {
-	if (executingManual) {
-		return;
-	}
-
-	executingManual = true;
 	switch (direction) {
 		case "l":
 			client.counterClockwise(manualRotationalSpeed);
-			setInterval(
-				function() { client.stop(); executingManual = false; }, //client.clockwise(manualRotationalSpeed); },
-				manualTimeApplicable
-				);
 			break;
 		case "r":
 			client.clockwise(manualRotationalSpeed);
-			setInterval(
-				function() { client.stop(); executingManual = false; }, //client.counterClockwise(manualRotationalSpeed); },
-				manualTimeApplicable
-				);
 			break;
 		case "f":
 			client.front(manualDirectionalSpeed);
-			setInterval(
-				function() { client.stop(); executingManual = false; }, //back(manualDirectionalSpeed); },
-				manualTimeApplicable
-				);
 			break;
 		case "b":
 			client.back(manualDirectionalSpeed);
-			setInterval(
-				function() { client.stop(); executingManual = false; }, //front(manualDirectionalSpeed); },
-				manualTimeApplicable
-				);
+			break;
+		case "s":
+			client.stop();
 			break;
 		default:
 			console.log("Unrecognized movement: " + direction);
-			executingManual = false;
 			break;
 	}
 }

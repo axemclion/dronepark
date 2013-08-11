@@ -18,10 +18,10 @@
   "bugs": {
     "url": "https://github.com/axemclion/dronepark/issues"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {
     "express": "~3.3.4",
-    "node-ar-drone": "git+https://github.com/felixge/node-ar-drone#master"
+    "node-ar-drone": "git+https://github.com/felixge/node-ar-drone#master",
+    "opencv": "~0.3.1"
   }
 }
