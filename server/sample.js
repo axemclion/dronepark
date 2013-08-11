@@ -3,15 +3,18 @@ var fs = require('fs');
 var client  = drone.createClient();
 var process = require('./imageprocess.js');
 
-
+client.config("video:video_channel", 3);
 client.getPngStream().on("data", function(data) {
-	fs.writeFile("snapshot.png", data, function(err) {
-		if (err) {
-			console.log(err);
-		} else {
-			console.log("Snapshot saved");
-			process.detect("snapshot.png");
-		}
-	})
-	
+	process.detect(data);
+});
+var express = require("express");
+var app = express();
+app.get("/", function(req, res) {
+	res.contentType("image/png");
+	res.send(process.result);
+});
+
+var port =  32123;
+app.listen(port, function() {
+	console.log("Listening on " + port);
 });
