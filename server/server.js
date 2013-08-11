@@ -21,6 +21,10 @@ app.get("/server/go", function(req, res) {
 	drone.go(req.query.d, respond(req, res));
 });
 
+app.get("/server/circle", function(req, res) {
+	drone.beginCircle(respond(req, res));
+});
+
 app.get("/server/stop", function(req, res) {
 	drone.stop(respond(req, res));
 });
