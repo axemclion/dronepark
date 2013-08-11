@@ -23,29 +23,8 @@ exports.getImage = function() {
 var targetHeight = 1.0;
 var liftSpeed = 0.5;
 var liftDirection = 0; // 0 -> do nothing, 1 -> down, 2 -> neutral, 3 -> up
-var droneStateInfo = {
-	battery : 0,
-	//rotation : 0,
-	frontBackDegrees : 0,
-	leftRightDegrees : 0,
-	clockwiseDegrees : 0,
-	altitude : 0,
-	velocity : { x : 0, y : 0, z : 0 },
-	status : 'incomplete', // 'complete' when parking is found
-	destination : { latitude : 0, longitude: 0 }
-};
 function setHover() {
 	client.on('navdata', function(navData) {
-		if (navData.hasOwnProperty("demo")) {
-			droneStateInfo.battery = navData.demo.batteryPercentage;
-			//droneStateInfo.rotation = navData.rotation;
-			droneStateInfo.frontBackDegrees = navData.demo.frontBackDegrees;
-			droneStateInfo.leftRightDegrees = navData.demo.leftRigthDegrees;
-			droneStateInfo.clockwiseDegrees = navData.demo.clockwiseDegrees;
-			droneStateInfo.altitude = navData.demo.altitudeMeters;
-			droneStateInfo.velocity = navData.demo.velocity;
-		}
-
 		if (liftDirection == 0) return;
 
 		if (navData.hasOwnProperty("demo")) {
@@ -76,16 +55,11 @@ function setHover() {
 var normalHeight = 1.5;
 var objectDetectedHeight = 0.2;
 function setObjectDetection(targetSize) {
-	client.config("video:video_channel", 3);
 	setInterval(function() {
 			if (imageProcessor.contoursSize() >= 25) {
 				targetHeight = objectDetectedHeight;
-				droneStateInfo.status = 'complete';
-				drone.StateInfo.destination.latitude = -122.3312776;
-				drone.StateInfo.destination.longitude = 47.6005914;
 			} else {
 				targetHeight = normalHeight;
-				droneStateInfo.status = 'incomplete';
 			}
 		},
 		100
@@ -94,6 +68,7 @@ function setObjectDetection(targetSize) {
 
 exports.init = function() {
 	setHover();
+	client.config("video:video_channel", 3);
 	streamImages();
 	setObjectDetection();
 	console.log("Drone initialized");
@@ -141,17 +116,23 @@ var manualRotationalSpeed = 0.4;
 var manualDirectionalSpeed = 0.2;
 exports.go = function(direction, cb) {
 	switch (direction) {
-		case "l":
-			client.counterClockwise(manualRotationalSpeed);
-			break;
-		case "r":
-			client.clockwise(manualRotationalSpeed);
-			break;
 		case "f":
 			client.front(manualDirectionalSpeed);
 			break;
 		case "b":
 			client.back(manualDirectionalSpeed);
+			break;
+		case "l":
+			client.left(manualDirectionalSpeed);
+			break;
+		case "r":
+			client.right(manualDirectionalSpeed);
+			break;
+		case "rl":
+			client.counterClockwise(manualRotationalSpeed);
+			break;
+		case "rr":
+			client.clockwise(manualRotationalSpeed);
 			break;
 		case "s":
 			client.stop();

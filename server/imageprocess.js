@@ -20,7 +20,7 @@ exports.detect = function(data) {
 
 		contours = im.findContours();
 		lastContoursSize = contours.size();
-		console.log(contours.size());
+		//console.log(contours.size());
 
 		im.drawAllContours(contours, WHITE);
 
