@@ -163,6 +163,7 @@ exports.stop = function(cb){
 }
 
 exports.status = function(cb){
+	var droneStateInfo = [];
 	droneStateInfo['status'] = flying ? 'flying' : 'complete';
 	cb(droneStateInfo);
 }
