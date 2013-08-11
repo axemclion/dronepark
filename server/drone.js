@@ -2,7 +2,7 @@ var drone = require('ar-drone');
 var fs = require('fs');
 var client  = drone.createClient();
 
-function startImageStream() {
+function streamImages() {
 	client.getPngStream().on("data", function(data) {
 		fs.writeFile("snapshot.png", data, function(err) {
 			if (err) {
@@ -14,33 +14,44 @@ function startImageStream() {
 	});
 }
 
-var targetHeight = 1;
-var liftSpeed = 0.05;
+var droneStopped = true;
+var liftSpeed = 0.4;
 var liftStopped = true;
-function startHover(cb) {
-	client.takeoff(function() {
-		console.log("Drone hovering");
-		client.on('navdata', function(navData) {
+function setHover(targetHeight) {
+	client.on('navdata', function(navData) {
+		if (!droneStopped) {
 			var offset = targetHeight - navData.demo.altitudeMeters;
 			var absOffset = offset < 0 ? offset * -1 : offset;
-			if (absOffset > 0.1) {
+			console.log("Offset: " + offset + ", " + navData.demo.altitudeMeters);
+			if (absOffset > 0.2) {
 				liftStopped = false;
 				if (offset > 0) {
-					client.down(liftSpeed);
-				} else {
 					client.up(liftSpeed);
+					console.log("Lifting");
+				} else {
+					client.down(liftSpeed);
+					console.log("Dropping");
 				}
 			} else if (!liftStopped) {
 				liftStopped = true;
+				client.stop();
+				console.log("Hovering");
 			}
-		});
-		cb();
+		}
 	});
 }
 
+exports.init = function() {
+	setHover(2.0);
+	console.log("Drone initialized");
+}
+
 exports.start = function(cb){
-	startHover(function() {
-		cb();
+	droneStopped = false;
+	console.log("Attempting takeoff");
+	client.takeoff(function() {
+		console.log("Takeoff successful");
+		cb({});
 	});
 }
 
@@ -48,15 +59,17 @@ var vidChannel = 0;
 exports.switchCamera = function() {
 	vidChannel = (vidChannel == 0 ? 3 : 0);
 	client.config("video:video_channel", vidChannel);
+	cb({});
 }
 
-exports.stop = function(){
+exports.stop = function(cb){
+	droneStopped = true;
 	console.log("Drone returning");
 	// Return to origin
 	client.land(function() {
 		console.log("Drone landed");
 	});
-	return {};
+	cb({});
 }
 
 var count = 0;
@@ -69,5 +82,4 @@ exports.status = function(cb){
 	} else {
 		cb({status: 'searching', count: count});
 	}
-	
 }

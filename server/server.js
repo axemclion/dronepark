@@ -20,6 +20,7 @@ app.get("/server/status", function(req, res) {
 var port = process.env.PORT || 32123;
 app.listen(port, function() {
 	console.log("Listening on " + port);
+	drone.init();
 });
 
 function respond(req, res){
