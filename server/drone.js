@@ -51,8 +51,48 @@ exports.start = function(cb){
 	console.log("Attempting takeoff");
 	client.takeoff(function() {
 		console.log("Takeoff successful");
+		client.back(0.02);
 		cb({});
 	});
+}
+
+var manualRotationalSpeed = 0.1;
+var manualDirectionalSpeed = 0.1;
+var manualTimeApplicable = 2000;
+exports.go = function(direction, cb) {
+	switch (direction) {
+		case "l":
+			client.counterClockwise(manualRotationalSpeed);
+			setInterval(
+				function() { client.clockwise(manualRotationalSpeed); },
+				manualTimeApplicable
+				);
+			break;
+		case "r":
+			client.clockwise(manualRotationalSpeed);
+			setInterval(
+				function() { client.counterClockwise(manualRotationalSpeed); },
+				manualTimeApplicable
+				);
+			break;
+		case "f":
+			client.front(manualDirectionalSpeed);
+			setInterval(
+				function() { client.back(manualDirectionalSpeed); },
+				manualTimeApplicable
+				);
+			break;
+		case "b":
+			client.back(manualDirectionalSpeed);
+			setInterval(
+				function() { client.front(manualDirectionalSpeed); },
+				manualTimeApplicable
+				);
+			break;
+		default:
+			console.log("Unrecognized movement: " + direction);
+			break;
+	}
 }
 
 var vidChannel = 0;

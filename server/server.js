@@ -17,6 +17,10 @@ app.get("/server/status", function(req, res) {
 	drone.status(respond(req, res));
 });
 
+app.get("/server/go", function(req, res) {
+	drone.go(req.query.d, respond(req, res));
+});
+
 var port = process.env.PORT || 32123;
 app.listen(port, function() {
 	console.log("Listening on " + port);
