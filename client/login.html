@@ -23,17 +23,7 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-			$("#login").click(function(){
-				var url = "https://www.paypal.com/webapps/auth/protocol/openidconnect/v1/authorize?";
-				var params = {
-					client_id : "AdFXGxAloP5gyrUvG_2zDXpYc4p97Xgz2iCGMznJ2qoB1yxcKQvQjFpq0JYL",
-					redirect_uri : "http://" + document.location.host,
-					nonce : Math.random(),
-					response_type: "code",
-					scope: "profile email address"
-				}
-				document.location.href = url + $.param(params);
-			});
+			
 		</script>
 	</body>
 </html>
