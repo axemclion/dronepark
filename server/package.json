@@ -19,9 +19,9 @@
     "url": "https://github.com/axemclion/dronepark/issues"
   },
   "devDependencies": {
-    "ar-drone": "~0.1.0"
   },
   "dependencies": {
-    "express": "~3.3.4"
+    "express": "~3.3.4",
+    "node-ar-drone": "git+https://github.com/felixge/node-ar-drone#master"
   }
 }
