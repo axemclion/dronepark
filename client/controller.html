@@ -3,6 +3,12 @@
 	<body>
 		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRLSEdGHVKqZNH4g3fnaSkJ87j6nyChRs&sensor=false&libraries=drawing">
     </script>
+    	<img id = "res" src = "http://localhost:32123/"/>
+		<script type="text/javascript">
+			window.setInterval(function(){
+				document.getElementById("res").src = server + "/image" + Math.random();
+			},100);
+		</script>
     	<button id = "takeOff">Takeoff</button>
     	<button id = "calibrate">Calibrate</button>
     	<button id = "followPath">Follow Path</button>
